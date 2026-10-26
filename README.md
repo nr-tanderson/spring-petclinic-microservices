@@ -1,5 +1,7 @@
 # Distributed version of the Spring PetClinic Sample Application built with Spring Cloud and Spring AI
 
+For this fork's manual deployment onto the shared AKS demo cluster, see [deploy/README.md](./deploy/README.md) and the **PetClinic on shared AKS** workflow. It deploys this repo's commit to an already-created cluster; use the separate infrastructure repo to create or destroy AKS.
+
 [![Build Status](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 

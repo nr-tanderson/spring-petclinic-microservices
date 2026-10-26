@@ -1,0 +1,64 @@
+name: PetClinic on shared AKS
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Deploy this repo commit or remove only the PetClinic namespace
+        type: choice
+        default: deploy
+        options: [deploy, uninstall]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: shared-aks-petclinic
+  cancel-in-progress: false
+
+jobs:
+  operate:
+    runs-on: ubuntu-latest
+    environment: lab-application
+    timeout-minutes: 60
+    env:
+      TFSTATE_STORAGE_ACCOUNT: ${{ vars.TFSTATE_STORAGE_ACCOUNT }}
+      TFSTATE_CONTAINER: ${{ vars.TFSTATE_CONTAINER }}
+      TFSTATE_KEY: ${{ vars.TFSTATE_KEY }}
+      PETCLINIC_OPERATION: ${{ inputs.operation }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: azure/setup-kubectl@v4
+      - uses: azure/use-kubelogin@v1
+        with:
+          kubelogin-version: v0.2.10
+      - uses: actions/setup-java@v4
+        if: inputs.operation == 'deploy'
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - uses: docker/setup-buildx-action@v3
+        if: inputs.operation == 'deploy'
+      - uses: azure/setup-helm@v4
+        if: inputs.operation == 'deploy'
+        with:
+          version: v3.19.0
+      - name: Install Kompose
+        if: inputs.operation == 'deploy'
+        run: |
+          curl --fail --location --silent --show-error \
+            https://github.com/kubernetes/kompose/releases/download/v1.38.0/kompose-linux-amd64 \
+            --output /tmp/kompose
+          sudo install /tmp/kompose /usr/local/bin/kompose
+      - name: Deploy or uninstall PetClinic under the shared lab lock
+        run: bash deploy/lab-lock.sh bash deploy/deploy-aks.sh
