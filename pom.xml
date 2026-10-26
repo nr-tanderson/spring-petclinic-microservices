@@ -35,6 +35,7 @@
         <datasource-micrometer.version>2.0.1</datasource-micrometer.version>
 
         <docker.image.prefix>springcommunity</docker.image.prefix>
+        <docker.image.tag>latest</docker.image.tag>
         <docker.image.exposed.port>9090</docker.image.exposed.port>
         <docker.image.dockerfile.dir>${basedir}</docker.image.dockerfile.dir>
         <!-- podman is also supported -->
@@ -192,7 +193,7 @@
                                             <argument>${container.platform}</argument>
                                             <argument>${container.build.extraarg}</argument>
                                             <argument>-t</argument>
-                                            <argument>${docker.image.prefix}/${project.artifactId}</argument>
+                                            <argument>${docker.image.prefix}/${project.artifactId}:${docker.image.tag}</argument>
                                             <argument>${project.build.directory}</argument>
                                         </arguments>
                                     </configuration>

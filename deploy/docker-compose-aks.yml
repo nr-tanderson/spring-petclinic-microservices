@@ -1,0 +1,21 @@
+services:
+  config-server:
+    image: ${PETCLINIC_IMAGE_PREFIX}/spring-petclinic-config-server:${PETCLINIC_IMAGE_TAG}
+  discovery-server:
+    image: ${PETCLINIC_IMAGE_PREFIX}/spring-petclinic-discovery-server:${PETCLINIC_IMAGE_TAG}
+  customers-service:
+    image: ${PETCLINIC_IMAGE_PREFIX}/spring-petclinic-customers-service:${PETCLINIC_IMAGE_TAG}
+  visits-service:
+    image: ${PETCLINIC_IMAGE_PREFIX}/spring-petclinic-visits-service:${PETCLINIC_IMAGE_TAG}
+  vets-service:
+    image: ${PETCLINIC_IMAGE_PREFIX}/spring-petclinic-vets-service:${PETCLINIC_IMAGE_TAG}
+  api-gateway:
+    image: ${PETCLINIC_IMAGE_PREFIX}/spring-petclinic-api-gateway:${PETCLINIC_IMAGE_TAG}
+  admin-server:
+    image: ${PETCLINIC_IMAGE_PREFIX}/spring-petclinic-admin-server:${PETCLINIC_IMAGE_TAG}
+  genai-service:
+    profiles: [genai]
+  grafana-server:
+    profiles: [local-observability]
+  prometheus-server:
+    profiles: [local-observability]
